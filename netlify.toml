@@ -1,0 +1,89 @@
+[build]
+  command = "cd app && npm install && npm run build"
+  publish = "app/dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["drizzle/**"]
+
+[dev]
+  command = "npm run dev"
+  targetPort = 5173
+  port = 8888
+  autoLaunch = false
+  framework = "#custom"
+  base = "app"
+
+# Variáveis de ambiente das functions
+[functions."*"]
+  [functions."*".environment]
+
+# Reescrever chamadas de API para as functions
+[[redirects]]
+  from = "/api/v1/internal/exams/issue-link"
+  to = "/.netlify/functions/internal-issue-link"
+  status = 200
+
+[[redirects]]
+  from = "/api/v1/internal/exams/status"
+  to = "/.netlify/functions/internal-status"
+  status = 200
+
+[[redirects]]
+  from = "/api/v1/admin/exams/submissions"
+  to = "/.netlify/functions/admin-exams-submissions"
+  status = 200
+
+[[redirects]]
+  from = "/api/v1/admin/exams/attempt/*"
+  to = "/.netlify/functions/admin-exams-attempt"
+  status = 200
+
+[[redirects]]
+  from = "/api/v1/exams/session"
+  to = "/.netlify/functions/exams-session"
+  status = 200
+
+[[redirects]]
+  from = "/api/v1/exams/submit"
+  to = "/.netlify/functions/exams-submit"
+  status = 200
+
+[[redirects]]
+  from = "/api/v1/exams/draft"
+  to = "/.netlify/functions/exams-draft"
+  status = 200
+
+# SPA fallback - sempre por último
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers de segurança
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Basic-Auth = "${ADMIN_BASIC_AUTH}"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.neon.tech"
+
+[[headers]]
+  for = "/api/v1/admin/*"
+  [headers.values]
+    Basic-Auth = "${ADMIN_BASIC_AUTH}"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.neon.tech"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.neon.tech"

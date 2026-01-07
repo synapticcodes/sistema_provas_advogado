@@ -1,0 +1,24 @@
+{
+    "name": "prova-advogado",
+    "version": "1.0.0",
+    "description": "Sistema de Prova Online para triagem de advogados",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "cd app && npm run dev",
+        "build": "cd app && npm run build",
+        "db:migrate": "node scripts/migrate.js",
+        "test": "npx vitest run"
+    },
+    "dependencies": {
+        "@neondatabase/serverless": "^0.9.0",
+        "dotenv": "^17.2.3",
+        "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "@netlify/functions": "^2.4.1",
+        "@types/node": "^20.10.0",
+        "typescript": "^5.3.0",
+        "vitest": "^4.0.16"
+    }
+}
