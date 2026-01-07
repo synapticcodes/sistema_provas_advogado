@@ -1,7 +1,7 @@
 /**
  * @fileoverview Configuração do React Router
  */
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { ExamPage } from './pages/ExamPage';
 import { CompletedPage } from './pages/CompletedPage';
@@ -15,6 +15,8 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/prova/:token" element={<ExamPage />} />
                 <Route path="/prova-concluida" element={<CompletedPage />} />
+                <Route path="/admin" element={<Navigate to="/admin/exams" replace />} />
+                <Route path="/admin/access" element={<Navigate to="/admin/exams" replace />} />
                 <Route path="/admin/exams" element={<AdminExamsPage />} />
                 <Route path="/admin/exams/:attempt_id" element={<AdminExamDetailPage />} />
             </Routes>
