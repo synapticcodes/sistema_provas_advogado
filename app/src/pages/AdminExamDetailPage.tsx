@@ -4,7 +4,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorScreen } from '../components/ErrorScreen';
-import { Loading } from '../components/Loading';
 import { getAdminAttemptDetail, saveAdminReview } from '../lib/adminApi';
 import type {
     IAdminAttemptDetailData,
