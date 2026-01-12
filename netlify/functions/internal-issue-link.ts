@@ -59,7 +59,7 @@ export default async (req: Request, _context: Context) => {
 
         // Verificar se candidato existe
         const candidates = await sql`
-      SELECT id FROM candidates WHERE id = ${candidate_id}
+      SELECT id FROM public.candidates WHERE id = ${candidate_id}
     `;
 
         if (candidates.length === 0) {
@@ -72,7 +72,7 @@ export default async (req: Request, _context: Context) => {
         // Verificar tentativa ativa existente
         const existingAttempts = await sql`
       SELECT id, status, issued_at
-      FROM exam_attempts
+      FROM public.exam_attempts
       WHERE candidate_id = ${candidate_id}
         AND status IN ('issued', 'in_progress')
       LIMIT 1
@@ -101,13 +101,13 @@ export default async (req: Request, _context: Context) => {
             const oldAttempt = existingAttempts[0];
 
             await sql`
-        UPDATE exam_attempts
+        UPDATE public.exam_attempts
         SET status = 'invalidated', updated_at = NOW()
         WHERE id = ${oldAttempt.id}
       `;
 
             await sql`
-        INSERT INTO audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
+        INSERT INTO public.audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
         VALUES (${candidate_id}, ${oldAttempt.id}, 'exam.link_invalidated', 'orchestrator', ${requestId})
       `;
 
@@ -125,7 +125,7 @@ export default async (req: Request, _context: Context) => {
 
         // Criar nova tentativa
         const newAttempts = await sql`
-      INSERT INTO exam_attempts (candidate_id, token_hash, token_prefix, status, meta)
+      INSERT INTO public.exam_attempts (candidate_id, token_hash, token_prefix, status, meta)
       VALUES (${candidate_id}, ${tokenHash}, ${tokenPrefix}, 'issued', ${JSON.stringify({ ttl_hours, exam_version: EXAM_VERSION })})
       RETURNING id, issued_at
     ` as { id: string; issued_at: string }[];
@@ -134,7 +134,7 @@ export default async (req: Request, _context: Context) => {
 
         // Registrar evento de auditoria
         await sql`
-      INSERT INTO audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
+      INSERT INTO public.audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
       VALUES (${candidate_id}, ${newAttempt.id}, 'exam.link_issued', 'orchestrator', ${requestId})
     `;
 

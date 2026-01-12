@@ -75,8 +75,8 @@ export default async (req: Request, _context: Context) => {
                   a.expires_at,
                   a.submitted_at,
                   COALESCE((a.meta->>'is_auto_submit')::boolean, false) AS is_auto_submit
-                FROM exam_attempts a
-                JOIN candidates c ON c.id = a.candidate_id
+                FROM public.exam_attempts a
+                JOIN public.candidates c ON c.id = a.candidate_id
                 WHERE a.id = ${attemptId}
                 LIMIT 1
             ` as IAttemptRow[];
@@ -90,7 +90,7 @@ export default async (req: Request, _context: Context) => {
 
             const answers = await sql`
                 SELECT question_id, answer_text, word_count, char_count
-                FROM exam_answers
+                FROM public.exam_answers
                 WHERE attempt_id = ${attemptId}
                   AND final = TRUE
                 ORDER BY question_id
@@ -98,7 +98,7 @@ export default async (req: Request, _context: Context) => {
 
             const reviews = await sql`
                 SELECT decision, score, notes, reviewer_name, reviewed_at
-                FROM exam_reviews
+                FROM public.exam_reviews
                 WHERE attempt_id = ${attemptId}
                 LIMIT 1
             ` as IReviewRow[];
@@ -164,7 +164,7 @@ export default async (req: Request, _context: Context) => {
 
             const attempts = await sql`
                 SELECT id, candidate_id, status
-                FROM exam_attempts
+                FROM public.exam_attempts
                 WHERE id = ${attemptId}
                 LIMIT 1
             ` as { id: string; candidate_id: string; status: string }[];
@@ -186,7 +186,7 @@ export default async (req: Request, _context: Context) => {
             }
 
             const reviews = await sql`
-                INSERT INTO exam_reviews (attempt_id, candidate_id, decision, score, notes, reviewer_name, reviewed_at)
+                INSERT INTO public.exam_reviews (attempt_id, candidate_id, decision, score, notes, reviewer_name, reviewed_at)
                 VALUES (
                   ${attempt.id},
                   ${attempt.candidate_id},
@@ -207,7 +207,7 @@ export default async (req: Request, _context: Context) => {
             ` as { decision: string; reviewed_at: string }[];
 
             await sql`
-                INSERT INTO audit_events (candidate_id, attempt_id, event_type, actor_type, request_id, payload)
+                INSERT INTO public.audit_events (candidate_id, attempt_id, event_type, actor_type, request_id, payload)
                 VALUES (
                   ${attempt.candidate_id},
                   ${attempt.id},

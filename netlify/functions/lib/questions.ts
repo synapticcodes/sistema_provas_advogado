@@ -64,7 +64,7 @@ O contrato prevê:
             {
                 id: 'C',
                 label: 'C',
-                text: 'Quais medidas e diligências você priorizaria para localizar e constranger patrimônio (ordem e justificativa)?',
+                text: 'Quais medidas e diligências você priorizaria para localizar e constringir patrimônio (ordem e justificativa)?',
             },
             {
                 id: 'D',

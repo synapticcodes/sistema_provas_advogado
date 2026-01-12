@@ -40,7 +40,7 @@ export default async (req: Request, _context: Context) => {
         // Buscar última tentativa do candidato
         const attempts = await sql`
       SELECT id, status, issued_at, started_at, expires_at, submitted_at
-      FROM exam_attempts
+      FROM public.exam_attempts
       WHERE candidate_id = ${candidateId}
       ORDER BY created_at DESC
       LIMIT 1

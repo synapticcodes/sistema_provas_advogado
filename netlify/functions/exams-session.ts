@@ -47,7 +47,7 @@ export default async (req: Request, _context: Context) => {
         // Buscar tentativa pelo hash
         const attempts = await sql`
       SELECT id, candidate_id, status, started_at, expires_at
-      FROM exam_attempts
+      FROM public.exam_attempts
       WHERE token_hash = ${tokenHash}
       LIMIT 1
     ` as IExamAttempt[];
@@ -87,13 +87,13 @@ export default async (req: Request, _context: Context) => {
         // Verificar expiração (se já iniciou)
         if (attempt.expires_at && now > new Date(attempt.expires_at)) {
             await sql`
-        UPDATE exam_attempts
+        UPDATE public.exam_attempts
         SET status = 'expired', updated_at = NOW()
         WHERE id = ${attempt.id}
       `;
 
             await sql`
-        INSERT INTO audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
+        INSERT INTO public.audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
         VALUES (${attempt.candidate_id}, ${attempt.id}, 'exam.expired', 'system', ${requestId})
       `;
 
@@ -116,7 +116,7 @@ export default async (req: Request, _context: Context) => {
             status = 'in_progress';
 
             await sql`
-        UPDATE exam_attempts
+        UPDATE public.exam_attempts
         SET started_at = ${startedAt.toISOString()},
             expires_at = ${expiresAt.toISOString()},
             status = 'in_progress',
@@ -126,7 +126,7 @@ export default async (req: Request, _context: Context) => {
       `;
 
             await sql`
-        INSERT INTO audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
+        INSERT INTO public.audit_events (candidate_id, attempt_id, event_type, actor_type, request_id)
         VALUES (${attempt.candidate_id}, ${attempt.id}, 'exam.started', 'candidate', ${requestId})
       `;
 
@@ -139,7 +139,7 @@ export default async (req: Request, _context: Context) => {
         } else {
             // Atualizar last_seen
             await sql`
-        UPDATE exam_attempts
+        UPDATE public.exam_attempts
         SET last_seen_at = NOW(), updated_at = NOW()
         WHERE id = ${attempt.id}
       `;

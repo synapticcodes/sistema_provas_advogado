@@ -31,7 +31,7 @@ Com base no cenario acima, responda as seguintes perguntas e, a seguir, elabore 
 
 A) Qual caminho você escolheria para iniciar (ex.: execução/monitória/cobrança; juizado/vara) e por quê.\
 B) Plano em 3 fases (Semana 1 / 30 dias / 60 dias): o que você faria em cada fase.\
-C) Quais medidas e diligências você priorizaria para localizar e constranger patrimônio (ordem e justificativa).\
+C) Quais medidas e diligências você priorizaria para localizar e constringir patrimônio (ordem e justificativa).\
 D) Como você trataria a questão de salário/conta-salário, considerando efetividade e limites legais.\
 E) Quais encargos contratuais você aplicaria no cálculo inicial e quais pontos você já antecipa que podem ser discutidos/reduzidos em juízo.\
 F) Qual seu plano se não localizar bens ou valores no primeiro ciclo.

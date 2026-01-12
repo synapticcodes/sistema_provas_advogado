@@ -50,8 +50,8 @@ export default async (req: Request, _context: Context) => {
         if (review === 'pending') {
             const totals = await sql`
                 SELECT COUNT(*)::int AS total
-                FROM exam_attempts a
-                LEFT JOIN exam_reviews r ON r.attempt_id = a.id
+                FROM public.exam_attempts a
+                LEFT JOIN public.exam_reviews r ON r.attempt_id = a.id
                 WHERE a.status = 'submitted'
                   AND r.id IS NULL
             ` as { total: number }[];
@@ -73,15 +73,15 @@ export default async (req: Request, _context: Context) => {
                   END AS time_spent_seconds,
                   r.decision,
                   r.reviewed_at
-                FROM exam_attempts a
-                JOIN candidates c ON c.id = a.candidate_id
+                FROM public.exam_attempts a
+                JOIN public.candidates c ON c.id = a.candidate_id
                 LEFT JOIN (
                   SELECT attempt_id, COUNT(*) AS answers_count
-                  FROM exam_answers
+                  FROM public.exam_answers
                   WHERE final = TRUE
                   GROUP BY attempt_id
                 ) ans ON ans.attempt_id = a.id
-                LEFT JOIN exam_reviews r ON r.attempt_id = a.id
+                LEFT JOIN public.exam_reviews r ON r.attempt_id = a.id
                 WHERE a.status = 'submitted'
                   AND r.id IS NULL
                 ORDER BY a.submitted_at DESC NULLS LAST
@@ -90,8 +90,8 @@ export default async (req: Request, _context: Context) => {
         } else if (review === 'reviewed') {
             const totals = await sql`
                 SELECT COUNT(*)::int AS total
-                FROM exam_attempts a
-                JOIN exam_reviews r ON r.attempt_id = a.id
+                FROM public.exam_attempts a
+                JOIN public.exam_reviews r ON r.attempt_id = a.id
                 WHERE a.status = 'submitted'
             ` as { total: number }[];
             total = totals[0]?.total || 0;
@@ -112,15 +112,15 @@ export default async (req: Request, _context: Context) => {
                   END AS time_spent_seconds,
                   r.decision,
                   r.reviewed_at
-                FROM exam_attempts a
-                JOIN candidates c ON c.id = a.candidate_id
+                FROM public.exam_attempts a
+                JOIN public.candidates c ON c.id = a.candidate_id
                 LEFT JOIN (
                   SELECT attempt_id, COUNT(*) AS answers_count
-                  FROM exam_answers
+                  FROM public.exam_answers
                   WHERE final = TRUE
                   GROUP BY attempt_id
                 ) ans ON ans.attempt_id = a.id
-                JOIN exam_reviews r ON r.attempt_id = a.id
+                JOIN public.exam_reviews r ON r.attempt_id = a.id
                 WHERE a.status = 'submitted'
                 ORDER BY a.submitted_at DESC NULLS LAST
                 LIMIT ${limit} OFFSET ${offset}
@@ -128,8 +128,8 @@ export default async (req: Request, _context: Context) => {
         } else {
             const totals = await sql`
                 SELECT COUNT(*)::int AS total
-                FROM exam_attempts a
-                LEFT JOIN exam_reviews r ON r.attempt_id = a.id
+                FROM public.exam_attempts a
+                LEFT JOIN public.exam_reviews r ON r.attempt_id = a.id
                 WHERE a.status = 'submitted'
             ` as { total: number }[];
             total = totals[0]?.total || 0;
@@ -150,15 +150,15 @@ export default async (req: Request, _context: Context) => {
                   END AS time_spent_seconds,
                   r.decision,
                   r.reviewed_at
-                FROM exam_attempts a
-                JOIN candidates c ON c.id = a.candidate_id
+                FROM public.exam_attempts a
+                JOIN public.candidates c ON c.id = a.candidate_id
                 LEFT JOIN (
                   SELECT attempt_id, COUNT(*) AS answers_count
-                  FROM exam_answers
+                  FROM public.exam_answers
                   WHERE final = TRUE
                   GROUP BY attempt_id
                 ) ans ON ans.attempt_id = a.id
-                LEFT JOIN exam_reviews r ON r.attempt_id = a.id
+                LEFT JOIN public.exam_reviews r ON r.attempt_id = a.id
                 WHERE a.status = 'submitted'
                 ORDER BY a.submitted_at DESC NULLS LAST
                 LIMIT ${limit} OFFSET ${offset}

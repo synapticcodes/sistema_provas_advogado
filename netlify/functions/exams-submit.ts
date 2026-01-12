@@ -48,7 +48,7 @@ export default async (req: Request, _context: Context) => {
         // Buscar tentativa
         const attempts = await sql`
       SELECT id, candidate_id, status, expires_at, submitted_at, meta
-      FROM exam_attempts
+      FROM public.exam_attempts
       WHERE token_hash = ${tokenHash}
       LIMIT 1
     ` as IExamAttempt[];
@@ -100,7 +100,7 @@ export default async (req: Request, _context: Context) => {
             const charCount = answer.answer_text.length;
 
             await sql`
-        INSERT INTO exam_answers (attempt_id, question_id, answer_text, final, word_count, char_count)
+        INSERT INTO public.exam_answers (attempt_id, question_id, answer_text, final, word_count, char_count)
         VALUES (${attempt.id}, ${answer.question_id}, ${answer.answer_text}, true, ${wordCount}, ${charCount})
         ON CONFLICT (attempt_id, question_id) WHERE final = TRUE
         DO UPDATE SET answer_text = EXCLUDED.answer_text,
@@ -118,7 +118,7 @@ export default async (req: Request, _context: Context) => {
         };
 
         await sql`
-      UPDATE exam_attempts
+      UPDATE public.exam_attempts
       SET status = 'submitted',
           submitted_at = NOW(),
           meta = ${JSON.stringify(updatedMeta)},
@@ -128,7 +128,7 @@ export default async (req: Request, _context: Context) => {
 
         // Registrar auditoria
         await sql`
-      INSERT INTO audit_events (candidate_id, attempt_id, event_type, actor_type, request_id, payload)
+      INSERT INTO public.audit_events (candidate_id, attempt_id, event_type, actor_type, request_id, payload)
       VALUES (
         ${attempt.candidate_id},
         ${attempt.id},

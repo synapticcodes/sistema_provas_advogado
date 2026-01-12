@@ -41,7 +41,7 @@ export default async (req: Request, _context: Context) => {
         // 1. Validar Token e Status
         const attempts = await sql`
       SELECT id, candidate_id, status, expires_at
-      FROM exam_attempts
+      FROM public.exam_attempts
       WHERE token_hash = ${tokenHash}
       LIMIT 1
     ` as IExamAttempt[];
@@ -71,7 +71,7 @@ export default async (req: Request, _context: Context) => {
             const charCount = answer.answer_text.length;
 
             await sql`
-        INSERT INTO exam_answers (attempt_id, question_id, answer_text, final, word_count, char_count, saved_at)
+        INSERT INTO public.exam_answers (attempt_id, question_id, answer_text, final, word_count, char_count, saved_at)
         VALUES (${attempt.id}, ${answer.question_id}, ${answer.answer_text}, false, ${wordCount}, ${charCount}, NOW())
         ON CONFLICT (attempt_id, question_id) WHERE final = FALSE
         DO UPDATE SET answer_text = EXCLUDED.answer_text,
@@ -83,7 +83,7 @@ export default async (req: Request, _context: Context) => {
 
         // Atualizar last_seen_at
         await sql`
-      UPDATE exam_attempts
+      UPDATE public.exam_attempts
       SET last_seen_at = NOW(), updated_at = NOW()
       WHERE id = ${attempt.id}
     `;
